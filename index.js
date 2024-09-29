@@ -34,7 +34,7 @@ const date = Date.now();
 let text = new Date(date).toString();
 console.log(text);
 
-app.get('/api/info', (req, res) => {
+app.get('/info', (req, res) => {
     res.send(`
         <p>Phonebook has info for ${persons.length} people</p>
         <p>${text}</p>
@@ -57,6 +57,15 @@ app.post('/api/persons', (req, res)=>{
             error: 'name or number missing'
         })
     }
+
+    const existName = persons.find(person => person.name === body.name)
+    if (existName) {
+        return res.status(400).json({
+            error: 'name must be unique'
+        })
+    }
+
+
 
     const person = {
         id: generateId(),
