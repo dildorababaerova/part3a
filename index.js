@@ -26,15 +26,20 @@ let persons = [
 ]
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 // Токен для логирования тела запроса
 morgan.token('req-body', (req) => {
-    return `name: '${req.body.name}', number: '${req.body.number}'`
+    return JSON.stringify(req.body);
 });
 
 // Настройка Morgan для логирования только метода, URL и тела запроса
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms { :req-body }'));
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms { :req-body }'));
 
+app.use(
+    morgan(':method :url :status :res[content-length] - :response-time ms - :date[iso] -{ :req-body }')
+  );
 
 app.get('/api/persons', (req, res) => {
     res.json(persons);
@@ -74,8 +79,6 @@ app.post('/api/persons', (req, res)=>{
             error: 'name must be unique'
         })
     }
-
-
 
     const person = {
         id: generateId(),
