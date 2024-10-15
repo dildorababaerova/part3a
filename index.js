@@ -4,8 +4,8 @@ const app = express();
 const cors = require('cors')
 
 app.use(cors({
-    origin: 'http://localhost:5173'
-    //credentials: true 
+    origin: 'http://localhost:5173',
+    credentials: true 
   }));
   
 
@@ -46,7 +46,7 @@ morgan.token('req-body', (req) => {
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms { :req-body }'));
 
 app.use(
-    morgan(':method :url :status :res[content-length] - :response-time ms - :date[iso] -{ :req-body }')
+    morgan(':method :url :status :res[content-length] - :response-time ms - :date[iso] - :req-body')
   );
 
 app.get('/api/persons', (req, res) => {
@@ -119,7 +119,7 @@ app.delete('/api/persons/:id', (req, res) => {
 
 
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen (PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
