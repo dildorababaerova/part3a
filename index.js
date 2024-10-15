@@ -3,12 +3,11 @@ const morgan = require('morgan');
 const app = express();
 const cors = require('cors')
 
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true 
-  }));
+app.use(cors());
   
-  app.use(express.static('dist'))
+app.use(express.static('dist'))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 let persons = [
     { 
@@ -33,8 +32,6 @@ let persons = [
     }
 ]
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 
 // Токен для логирования тела запроса
