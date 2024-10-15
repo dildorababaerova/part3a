@@ -8,7 +8,7 @@ app.use(cors({
     credentials: true 
   }));
   
-
+  app.use(express.static('dist'))
 
 let persons = [
     { 
