@@ -283,6 +283,26 @@ const getAll = () => {
 // ...
 
 
+If the project was created with Vite, this problem is easy to solve. It is enough to add the following declaration to the vite.config.js file of the frontend repository.
+
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    }
+  },
+})
+
 Render(webserver)
 
 In case of Render, the scripts look like the following:
@@ -303,3 +323,6 @@ You can use shx:
     "clean": "shx rm -rf build dist && shx echo Done"
   }
 }
+
+
+https://part3a.onrender.com
