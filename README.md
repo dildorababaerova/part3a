@@ -326,3 +326,15 @@ You can use shx:
 
 
 https://part3a.onrender.com
+
+
+Chrome dev tools
+
+Debugging is also possible with the Chrome developer console by starting your application with the command:
+
+`node --inspect index.js`
+
+You can also pass the --inspect flag to nodemon:
+
+`npx nodemon --inspect index.js`
+
