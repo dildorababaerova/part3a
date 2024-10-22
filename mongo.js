@@ -1,11 +1,13 @@
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
-  console.log('Usage: node script.js <password> <name> <number>')
+  console.log('give password as argument')
   process.exit(1)
 }
 
 const password = process.argv[2]
+const name = process.argv[3]     // Name from command-line arguments
+const number = process.argv[4]
 
 
 const url = `mongodb+srv://48212:${password}@cluster0.7kuuk.mongodb.net/phoneApp?retryWrites=true&w=majority&appName=Cluster0`
@@ -23,15 +25,22 @@ const Person = mongoose.model('Person', personSchema)
 
 // Create a new person instance
 const person = new Person({
-  name: 'Arto Hellas',
-  number: '044-12-349',
+  name: name,
+  number:number,
 })
 
 // Save the person to the database
-person.save().then(result => {
-  console.log(`added ${name} (${number}) to phonebook`)
+person.save()
+.then(() => {
+  console.log(`added ${person.name} ${person.number} to phonebook`)
+return Person.find({})
+.then(result => {
+  result.forEach(person => {
+    console.log(person)
+  })
   mongoose.connection.close()
 }).catch(err => {
   console.error('Error saving person:', err)
   mongoose.connection.close()
+})
 })
