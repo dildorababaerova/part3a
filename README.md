@@ -402,7 +402,43 @@ Person
     mongoose.connection.close()
   })
 
-  
+To avoid authentication issues with the password variable in index.js, we need to create `a .env` file by running `npm install dotenv` in the command line.
+
+Once the .env file is ready, remember to add it to your `.gitignore` file to prevent pushing the password to Git:
+
+/node_modules
+.env
+
+The frontend assumes that every object has a unique id in the id field. We also don't want to return the mongo versioning field __v to the frontend.
+
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    // Even though the _id property of Mongoose objects looks like a string, it is in fact an object. The toJSON method we 
+    //defined transforms it into a string just to be safe. 
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
+
+NB: chatGPT version:
+
+doc.save()
+  .then((savedDoc) => {
+    // Convert the document to a plain JavaScript object without the `__v` field
+    const plainObj = savedDoc.toObject({ versionKey: false });
+    console.log(plainObj); // { name: 'Alice', age: 30 }
+  })
+  .catch((error) => {
+    console.error('Error saving document:', error);
+  });
+
+- The environment variables defined in the `.env` file can be taken into use with the expression `require('dotenv').config()` and and you can reference them in your code just like you would reference normal environment variables, with the` process.env.MONGODB_URI` syntax.
+
+
+
+
+
 
 
 
