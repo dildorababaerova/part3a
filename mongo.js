@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-if (process.argv.length < 3) {
+if (process.argv.length < 5) {
   console.log('give password as argument')
   process.exit(1)
 }
@@ -39,8 +39,8 @@ person.save()
 .then(result => {
   result.forEach(person => {
     console.log(`${person.name} ${person.number} `)
+    mongoose.connection.close()
   })
-  mongoose.connection.close()
 }).catch(err => {
   console.error('Error saving person:', err)
   mongoose.connection.close()
