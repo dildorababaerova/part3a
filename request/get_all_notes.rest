@@ -7,6 +7,16 @@ POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-  "name": "Barselona",
-  "number": "111-111-111"
+  "name": "RequestLogger",
+  "number": "1234567890"
 }
+
+
+###
+
+GET http://localhost:3001/api/persons/671d4a3b43f35af24b254335
+
+
+###
+
+DELETE http://localhost:3001/api/persons/671d4a3b43f35af24b254335
