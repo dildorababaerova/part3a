@@ -28,34 +28,15 @@ const errorHandler=(error, request, response, next) => {
     }
     next(error)
 }
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' });
+  };
 
 app.use(cors())  
 app.use(express.static('dist'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// let persons = [
-//     { 
-//       "id": "1",
-//       "name": "Arto Hellas", 
-//       "number": "040-123456"
-//     },
-//     { 
-//       "id": "2",
-//       "name": "Ada Lovelace", 
-//       "number": "39-44-5323523"
-//     },
-//     { 
-//       "id": "3",
-//       "name": "Dan Abramov", 
-//       "number": "12-43-234345"
-//     },
-//     { 
-//       "id": "4",
-//       "name": "Mary Poppendieck", 
-//       "number": "39-23-6423122"
-//     }
-// ]
+app.use(requestLogger);
 
 
 
@@ -76,22 +57,6 @@ app.get('/api/persons', (request, response) => {
         response.json(persons)
     })
 });
-
-const  errorHandler = (error, request, response, next) => {
-    console.error(error.message);
-
-    if (error.name === 'CastError') {
-        return response.status().send({ error: 'malformatted id' });
-    }
-    next(error);
-}
-
-
-
-const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' });
-  };
-
 
 
 app.get('/info', (request, response) => {
@@ -128,7 +93,6 @@ app.post('/api/persons', (request, response, next)=>{
             error: 'name must be unique'
         })
     } else {
-    
         const person = new Person ({
         name: body.name,
         number: body.number
@@ -152,24 +116,41 @@ app.get('/api/persons/:id', (request, response, next) =>{
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-    Person.findByIdAndRemove(request.params.id)
-      .then((result) => {
+app.delete('/api/persons/:id', (request, response, next) => {
+    Person.findByIdAndDelete(request.params.id)
+      .then(result => {
+        if (result) {
           response.status(204).end()
         } else {
           response.status(404).json({ error: 'Person not found' })
         }
-      })
-      .catch((error) => {
-        console.error('Error deleting person:', error.message)
-        response.status(500).json({ error: 'Server error' })
-      })
+    })
+    .catch(error => next(error))
   })
 
+  app.put('/api/persons/:id', (request, response, next) => {
+    const { name, number } = request.body
+  
+    Note.findByIdAndUpdate(
+      request.params.id, 
+      { name, number },
+      { new: true, runValidators: true, context: 'query' }
+    ) 
+      .then(updatedPerson  => {
+        response.json(updatedPerson)
+      })
+      .catch(error => next(error))
+  })
+  
 
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen (PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
+
+
 
