@@ -18,7 +18,11 @@ mongoose.connect(url)
 
 // Define the correct schema for a person
 const personSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minLength:[ 3, 'Person validation failed : name must be at least 3 characters long'],
+    required: true
+  },
   number: {
     type: String,
     minLength: 8,
