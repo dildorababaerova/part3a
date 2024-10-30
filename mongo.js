@@ -31,17 +31,17 @@ const person = new Person({
 
 // Save the person to the database
 person.save()
-.then(() => {
-  console.log(`added ${person.name} ${person.number} to phonebook`)
+  .then(() => {
+    console.log(`added ${person.name} ${person.number} to phonebook`)
 
-  return Person.find({})
-})
-.then(result => {
-  result.forEach(person => {
-    console.log(`${person.name} ${person.number} `)
+    return Person.find({})
+  })
+  .then(result => {
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number} `)
+      mongoose.connection.close()
+    })
+  }).catch(err => {
+    console.error('Error saving person:', err)
     mongoose.connection.close()
   })
-}).catch(err => {
-  console.error('Error saving person:', err)
-  mongoose.connection.close()
-})
