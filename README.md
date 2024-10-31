@@ -436,6 +436,206 @@ doc.save()
 - The environment variables defined in the `.env` file can be taken into use with the expression `require('dotenv').config()` and and you can reference them in your code just like you would reference normal environment variables, with the` process.env.MONGODB_URI` syntax.
 
 
+### Validation
+
+* Our application shouldn't accept notes that have a missing or empty content property. 
+
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+
+  if (body.content === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
+
+  // ...
+})
+
+
+* One smarter way of validating the format of the data before it is stored in the database is to use the validation functionality available in Mongoose. models => persons.js
+
+const noteSchema = new mongoose.Schema({
+
+  content: {
+    type: String,
+    minLength: 5,
+    required: true
+  },
+  important: Boolean
+})
+
+-  Let's change our `handler for creating a new person` so that it passes any potential exceptions to the `error handler middleware:`
+
+app.post('/api/persons', (request, response, next) => {
+  const body = request.body
+
+  const person = new Person({
+    content: body.content,
+    important: body.important || false,
+  })
+
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+
+    .catch(error => next(error))
+})
+
+- Let's expand the `error handler` to deal with these `validation errors`:
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
+
+* Validations are not done when editing a note.
+The documentation addresses the issue by explaining that validations are `not run by default` when findOneAndUpdate and related methods are executed.
+
+The fix easy:
+
+app.put('/api/persons/:id', (request, response, next) => {
+
+  const { content, important } = request.body
+
+  Person.findByIdAndUpdate(
+    request.params.id, 
+
+    { content, important },
+    { new: true, runValidators: true, context: 'query' }
+  ) 
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => next(error))
+})
+
+When using Render, the `database url` is given by defining the proper env in the dashboard:
+
+
+### Lint
+
+* Let's `install ESlint` as a development dependency to the notes backend project with the command:
+
+`npm install eslint @eslint/js --save-dev`
+
+After this we can `initialize a default ESlint` configuration with the command:
+`npx eslint --init`
+
+We will answer all of the questions. (You should to answer questions:
+How would you like to use ESLint? syntax
+What type of modules does your project use? commonjs
+Wich framework does your project use? none
+Does your project use TypeScript? none // that came javascript
+Where does your code run? node
+Would you like to install them now? Yes
+Wich package manager do you want to use? npm
+)
+
+`npm install --save-dev @stylistic/eslint-plugin-js`
+
+* Inspecting and validating a file like index.js can be done with the following command:
+`npx eslint index.js`
+
+- It is recommended to create a separate npm script for linting in package.json:
+
+{
+  // ...
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    // ...
+
+    "lint": "eslint ."
+  },
+  // ...
+}
+
+Now the `npm run lint` command will check every file in the project.
+
+- The configuration will be saved in the generated `eslint.config.mjs` file:
+
+
+import globals from "globals";
+import stylisticJs from '@stylistic/eslint-plugin-js'
+import js from '@eslint/js'
+
+export default [
+  js.configs.recommended,
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+      },
+      ecmaVersion: "latest",
+    },
+    plugins: {
+      '@stylistic/js': stylisticJs
+    },
+    rules: {
+      '@stylistic/js/indent': [
+        'error',
+        2
+      ],
+      '@stylistic/js/linebreak-style': [
+        'error',
+        'unix'
+      ],
+      '@stylistic/js/quotes': [
+        'error',
+        'single'
+      ],
+      '@stylistic/js/semi': [
+        'error',
+        'never'
+      ],
+      'eqeqeq': 'error',
+      'no-trailing-spaces': 'error',
+      'object-curly-spacing': [
+        'error', 'always'
+      ],
+      'arrow-spacing': [
+        'error', { 'before': true, 'after': true },
+      ],
+      'no-console': 'off',
+    },
+  },
+  { 
+    ignores: ["dist/**", "build/**"],
+  },
+]
+
+
+### Structure of backend application
+
+Let's separate all printing to the console to its own module utils/logger.js:
+
+const info = (...params) => {
+  console.log(...params)
+}
+
+const error = (...params) => {
+  console.error(...params)
+}
+
+module.exports = {
+  info, error
+}
+
+
+
+
+
+
 
 
 
