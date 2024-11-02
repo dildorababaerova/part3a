@@ -653,8 +653,58 @@ const config = require('./utils/config')
 logger.info(`Server running on port ${config.PORT}`)
 
 
+### Note on exports
+
+* We have used two different kinds of exports in this part. 
+
+-const info = (...params) => {
+  console.log(...params)
+}
+
+const error = (...params) => {
+  console.error(...params)
+}
 
 
+module.exports = {
+  info, error
+}
+
+- The file exports an object that has two fields, functions.
+- The functions can be used in` two different ways`.
+- First option the whole object and refer to functions through the object using `the dot` notation:
+
+
+const logger = require('./utils/logger')
+
+logger.info('message')
+
+logger.error('error message')
+
+- The other option is to destrusture the functions to their own variables in the require statement:
+
+const { info, error } = require('./utils/logger')
+
+info('message')
+error('error message')
+
+The second way of exporting may be preferable if only a small portion of the exported functions used in a file.
+
+const notesRouter = require('express').Router()
+const Note = require('../models/note')
+
+// ...
+
+
+module.exports = notesRouter
+
+In this case, there is just one "thing" exported, so the only way to use it is following:
+
+const notesRouter = require('./controllers/notes')
+
+// ...
+
+app.use('/api/notes', notesRouter)
 
 
 
