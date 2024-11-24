@@ -5,7 +5,7 @@
 
 in package.json => "start": "node index.js",
 
-`
+```js
 {
   // ...
   "scripts": {
@@ -16,31 +16,34 @@ in package.json => "start": "node index.js",
   // ...
 }
 
-`
-we can run it as an npm script: `npm start`
+```
+
+- we can run it as an npm script: `npm start`
 
 * `npm install express`
 
 - The dependency is also added to our package.json file:
 
-`
+```js
 {
   // ...
   "dependencies": {
     "express": "^4.18.2"
   }
 }
-`
+```
+
 * We can update the dependencies of the project with the command:
 - `npm update`
 - `npm install`
-The first request parameter contains all of the information of the HTTP request, and the second response parameter is used to define how the request is responded to.
+
+The first `request` parameter contains` all of the information of the HTTP request`, and the second `response` parameter is used to `define` how the request is responded to.
 
 * You can start the interactive node-repl by typing in `node` in the command line.
 
 * nodemon will watch the files in the directory in which nodemon was started, and if any files change,  nodemon will automatically restart your node application.
 - `npm install --save-dev nodemon`
-`
+```js
 {
   //...
   "dependencies": {
@@ -50,8 +53,8 @@ The first request parameter contains all of the information of the HTTP request,
     "nodemon": "^3.0.3"
   }
 }
-`
-`
+```
+```js
 {
   // ..
   "scripts": {
@@ -62,15 +65,15 @@ The first request parameter contains all of the information of the HTTP request,
   },
   // ..
 }
-`
+```
 * We can now start the server in development mode with the command:
 - `npm run dev`
 
-* The id parameter in the route of a request can be accessed through the request object:
+* The `id` parameter in the route of a request can be accessed through the `request` object:
 
 -`const id = request.params.id`
 
-`
+```js
 app.get('/api/notes/:id', (request, response) => {
   const id = request.params.id
   const note = notes.find(note => note.id === id)
@@ -82,22 +85,23 @@ app.get('/api/notes/:id', (request, response) => {
     response.status(404).end()
   }
 })
-`
+```
 
-* Deletion happens by making an HTTP DELETE request to the URL of the resource:
+* `Deletion` happens by making an `HTTP DELETE request` to the URL of the resource:
 
-`
+```js
 app.delete('/api/notes/:id', (request, response) => {
   const id = request.params.id
   notes = notes.filter(note => note.id !== id)
 
   response.status(204).end()
 })
-`
-* Adding a note happens by making an HTTP POST request to the address http://localhost:3001/api/notes, and by sending all the information for the new note in the request body in JSON format.
+```
+
+* `Adding` a note happens by making an `HTTP POST request` to the address http://localhost:3001/api/notes, and by sending all the information for the new note in the request body in JSON format.
 - We need the help of the Express json-parser that we can use with the command `app.use(express.json())`.
 
-`
+```js
 const express = require('express')
 const app = express()
 
@@ -133,18 +137,21 @@ app.post('/api/notes', (request, response) => {
 
   response.json(note)
 })
-`
+```
 - The event handler function can access the data from the `body` property of the `request` object.
 
-`
+```js
 const express = require('express');
 const app = express();
+```
 
-Morgan works as middleware in your Express app, so it intercepts each request coming to your server, processes some logging information, and then passes control to the next middleware (or to your route handler).
+### Morgan 
+
+`Morgan` works as` middleware` in your Express app, so it intercepts each request coming to your server, processes some logging information, and then passes control to the next middleware (or to your route handler).
 const morgan = require('morgan');
 
 * `npm install morgan`
-
+```js
 // Middleware to parse incoming JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -168,7 +175,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-`
+```
 * Predefined Formats in Morgan
 1. combined:
 
@@ -199,7 +206,7 @@ app.use(morgan(''tiny))
 
 
 * Writing Logs to a File: You can log to a file instead of the console by creating a write stream:
-
+```js
 const fs = require('fs');
 const path = require('path');
 const morgan = require('morgan');
@@ -218,6 +225,7 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
   console.log('Server running on port 3000');
 });
+```
 * Available Tokens
 Here is a list of some commonly used tokens that you can use in your custom formats:
 
@@ -249,28 +257,29 @@ Cross-origin resource sharing (CORS) is a mechanism that allows restricted resou
 We can allow requests from other origins by using Node's cors middleware.
 - `npm install cors`
 
-`const cors = require('cors')`
+```js
+const cors = require('cors')
 
-`app.use(cors())`
+app.use(cors())
 
-* const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
+```
 When the application is deployed, we must create a production build or a version of the application that is optimized for production.
 
 A production build for applications created with Vite can be created with the command `npm run build`.
 This creates a directory called dist which contains the only HTML file of our application (index.html) and the directory assets. 
 
 
-One option for deploying the frontend is to copy the production build (the dist directory) to the root of the backend repository and configure the backend to show the frontend's main page (the file dist/index.html) as its main page.
+One option for deploying the frontend is to copy the production build (the dist directory) `to the root of the backend repository` and configure the backend to show the frontend's main page (the file dist/index.html) as its main page.
 `cp -r dist ../backend` // Mac or Linux 
 If you are using a Windows computer, you may use either `copy` or `xcopy` command instead. Otherwise, simply copy and paste.
 In backend add:
 `app.use(express.static('dist'))`
 Because of our situation, both the frontend and the backend are at the same address, we can declare baseUrl as a relative URL. This means we can leave out the part declaring the server. `const baseUrl = '/api/notes'`
-
+```js
 import axios from 'axios'
 
 const baseUrl = '/api/notes'
@@ -281,11 +290,11 @@ const getAll = () => {
 }
 
 // ...
-
+```
 
 If the project was created with Vite, this problem is easy to solve. It is enough to add the following declaration to the vite.config.js file of the frontend repository.
 
-
+```js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
@@ -302,11 +311,12 @@ export default defineConfig({
     }
   },
 })
+```
 
-Render(webserver)
+### Render(webserver)
 
 In case of Render, the scripts look like the following:
-
+```js
 {
   "scripts": {
     //...
@@ -314,21 +324,22 @@ In case of Render, the scripts look like the following:
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   }
 }
+```
 
 You can use shx:
 `npm install shx --save-dev`
-
+```js
 {
   "scripts": {
     "clean": "shx rm -rf build dist && shx echo Done"
   }
 }
-
+```
 
 https://part3a.onrender.com
 
 
-Chrome dev tools
+### Chrome dev tools
 
 Debugging is also possible with the Chrome developer console by starting your application with the command:
 
@@ -346,6 +357,7 @@ You can also pass the --inspect flag to nodemon:
 
 - Let's make a practice application by creating a new file, mongo.js in the root of the notes backend application:
 
+```js
 const mongoose = require('mongoose')
 
 if (process.argv.length<3) {
@@ -401,16 +413,17 @@ Person
     // ...
     mongoose.connection.close()
   })
-
-To avoid authentication issues with the password variable in index.js, we need to create `a .env` file by running `npm install dotenv` in the command line.
+```
+-  To avoid authentication issues with the password variable in index.js, we need to create `a .env` file by running `npm install dotenv` in the command line.
 
 Once the .env file is ready, remember to add it to your `.gitignore` file to prevent pushing the password to Git:
 
+```js
 /node_modules
 .env
-
-The frontend assumes that every object has a unique id in the id field. We also don't want to return the mongo versioning field __v to the frontend.
-
+```
+- The frontend assumes that every object has a unique id in the id field. We also don't want to return the mongo versioning field __v to the frontend.
+```js
 noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     // Even though the _id property of Mongoose objects looks like a string, it is in fact an object. The toJSON method we 
@@ -420,9 +433,9 @@ noteSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
-
+```
 NB: chatGPT version:
-
+```js
 doc.save()
   .then((savedDoc) => {
     // Convert the document to a plain JavaScript object without the `__v` field
@@ -432,14 +445,14 @@ doc.save()
   .catch((error) => {
     console.error('Error saving document:', error);
   });
-
+```
 - The environment variables defined in the `.env` file can be taken into use with the expression `require('dotenv').config()` and and you can reference them in your code just like you would reference normal environment variables, with the` process.env.MONGODB_URI` syntax.
 
 
 ### Validation
 
 * Our application shouldn't accept notes that have a missing or empty content property. 
-
+```js
 app.post('/api/notes', (request, response) => {
   const body = request.body
 
@@ -449,10 +462,11 @@ app.post('/api/notes', (request, response) => {
 
   // ...
 })
-
+```
 
 * One smarter way of validating the format of the data before it is stored in the database is to use the validation functionality available in Mongoose. models => persons.js
 
+```js
 const noteSchema = new mongoose.Schema({
 
   content: {
@@ -462,9 +476,10 @@ const noteSchema = new mongoose.Schema({
   },
   important: Boolean
 })
-
+```
 -  Let's change our `handler for creating a new person` so that it passes any potential exceptions to the `error handler middleware:`
 
+```js
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
@@ -480,9 +495,11 @@ app.post('/api/persons', (request, response, next) => {
 
     .catch(error => next(error))
 })
+```
 
 - Let's expand the `error handler` to deal with these `validation errors`:
 
+```js
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
@@ -495,12 +512,13 @@ const errorHandler = (error, request, response, next) => {
 
   next(error)
 }
+```
 
 * Validations are not done when editing a note.
 The documentation addresses the issue by explaining that validations are `not run by default` when findOneAndUpdate and related methods are executed.
 
 The fix easy:
-
+```js
 app.put('/api/persons/:id', (request, response, next) => {
 
   const { content, important } = request.body
@@ -516,7 +534,7 @@ app.put('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => next(error))
 })
-
+```
 When using Render, the `database url` is given by defining the proper env in the dashboard:
 
 
@@ -528,7 +546,7 @@ When using Render, the `database url` is given by defining the proper env in the
 
 After this we can `initialize a default ESlint` configuration with the command:
 `npx eslint --init`
-
+```js
 We will answer all of the questions. (You should to answer questions:
 How would you like to use ESLint? syntax
 What type of modules does your project use? commonjs
@@ -538,6 +556,7 @@ Where does your code run? node
 Would you like to install them now? Yes
 Wich package manager do you want to use? npm
 )
+```
 
 `npm install --save-dev @stylistic/eslint-plugin-js`
 
@@ -545,7 +564,7 @@ Wich package manager do you want to use? npm
 `npx eslint index.js`
 
 - It is recommended to create a separate npm script for linting in package.json:
-
+```js
 {
   // ...
   "scripts": {
@@ -557,12 +576,13 @@ Wich package manager do you want to use? npm
   },
   // ...
 }
+```
 
 Now the `npm run lint` command will check every file in the project.
 
 - The configuration will be saved in the generated `eslint.config.mjs` file:
 
-
+```js
 import globals from "globals";
 import stylisticJs from '@stylistic/eslint-plugin-js'
 import js from '@eslint/js'
@@ -614,11 +634,11 @@ export default [
   },
 ]
 
-
+```
 ### Structure of backend application
 
 Let's separate all printing to the console to its own module utils/logger.js:
-
+```js
 const info = (...params) => {
   console.log(...params)
 }
@@ -630,11 +650,12 @@ const error = (...params) => {
 module.exports = {
   info, error
 }
+```
 
 The logger has two functions, `info` and `error`.
 
 - The handling if environtment variables is extracted into a separate utils/config.js:
-
+```js
 require('dotenv').config()
 
 const PORT = process.env.PORT
@@ -644,10 +665,10 @@ module.exports = {
   MONGODB_URI,
   PORT
 }
-
+```
 The other parts of the application can access the environment variables by importing the configuration module:
 
-
+```js
 const config = require('./utils/config')
 
 logger.info(`Server running on port ${config.PORT}`)
@@ -669,27 +690,31 @@ const error = (...params) => {
 module.exports = {
   info, error
 }
+```
 
 - The file exports an object that has two fields, functions.
 - The functions can be used in` two different ways`.
 - First option the whole object and refer to functions through the object using `the dot` notation:
 
-
+```js
 const logger = require('./utils/logger')
 
 logger.info('message')
 
 logger.error('error message')
+```
 
 - The other option is to destrusture the functions to their own variables in the require statement:
 
+```js
 const { info, error } = require('./utils/logger')
 
 info('message')
 error('error message')
+```
 
-The second way of exporting may be preferable if only a small portion of the exported functions used in a file.
-
+The second way of exporting may be preferable if `only a small portion `of the exported functions used in a file.
+```js
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
@@ -706,7 +731,7 @@ const notesRouter = require('./controllers/notes')
 
 app.use('/api/notes', notesRouter)
 
-
+```
 
 
 
