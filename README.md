@@ -1,7 +1,7 @@
 # part3a
 
-* Create a new template for our application with the npm init command.
--`npm  init`
+* Create a new template for our application with the npm init command:
+`npm  init`
 
 in package.json => "start": "node index.js",
 
